@@ -111,7 +111,7 @@ const Home = () => {
 
         <div className="flex flex-col items-center mt-4 gap-4">
           <h2 className="text-4xl">Access Token</h2>
-          <div>{accessToken ?? "You need to login with Strava"}</div>
+          <div>{accessToken ?? "You need to login to Strava"}</div>
         </div>
 
         <div className="flex gap-4 mt-8">
