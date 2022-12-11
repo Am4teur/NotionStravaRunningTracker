@@ -104,7 +104,6 @@ const Home = () => {
         >
           Login to Strava
         </button>
-        <button onClick={() => {}}>Login to Notion</button>
 
         <div>
           <div>{accessToken}</div>
