@@ -70,7 +70,7 @@ export default async function handler(
       const testingFormattedDate = "2022-12-10"; // todayFormattedDate
       const activityToUpdate = activities.find(
         (activity: any) =>
-          activity.start_date.split("T")[0] === testingFormattedDate
+          activity.start_date.split("T")[0] === todayFormattedDate // testingFormattedDate
       );
       if (!activityToUpdate) {
         res
@@ -88,6 +88,14 @@ export default async function handler(
 
         // return paceInt + ":" + Math.round((paceFloat * 60) / 100);
         return parseFloat(paceInt + "." + Math.round((paceFloat * 60) / 100));
+      };
+
+      const getKm = (distance: number): number => {
+        return Math.round(distance) / 1000;
+      };
+
+      const getTime = (time: number): number => {
+        return Math.round((time / 60) * 100) / 100;
       };
 
       // update
@@ -114,7 +122,7 @@ export default async function handler(
         page_id: pageIdToUpdate,
         properties: {
           Km: {
-            number: activityToUpdate.distance,
+            number: getKm(activityToUpdate.distance),
           },
         },
       });
@@ -122,7 +130,7 @@ export default async function handler(
         page_id: pageIdToUpdate,
         properties: {
           Time: {
-            number: activityToUpdate.moving_time,
+            number: getTime(activityToUpdate.moving_time),
           },
         },
       });
