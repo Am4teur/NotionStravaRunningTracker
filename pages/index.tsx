@@ -1,5 +1,6 @@
 import Head from "next/head";
 import { useEffect, useState } from "react";
+import Button from "../components/Button";
 import styles from "../styles/Home.module.css";
 import { activity } from "../types/activity";
 import { athlete } from "../types/athlete";
@@ -49,6 +50,10 @@ const Home = () => {
     return authorizeUrl;
   };
 
+  const loginStrava = () => {
+    window.location.assign(getAuthorizeUrl());
+  };
+
   const fetchData = async (url: string, method: string = "GET") => {
     const response = await fetch(url, {
       method: method,
@@ -96,57 +101,62 @@ const Home = () => {
 
       <main className={styles.main}>
         <h1 className={styles.title}>Running Tracker</h1>
-        <h2>from Runners to Runners</h2>
-        <button
-          onClick={() => {
-            window.location.assign(getAuthorizeUrl());
-          }}
-        >
-          Login to Strava
-        </button>
+        <h2 className="text-4xl">from Runners to Runners</h2>
 
-        <div>
-          <div>{accessToken}</div>
-          <button onClick={getAthlete} disabled={!accessToken}>
-            Show Athlete
-          </button>
-          <button onClick={getActivities} disabled={!accessToken}>
-            Show Activities
-          </button>
-          <button onClick={updateTodayActivity} disabled={!accessToken}>
-            Add Today Strava Activity to Notion
-          </button>
+        <div className="mt-8">
+          <Button onClick={loginStrava} color="bg-orange-500" stravaIcon>
+            Login to Strava
+          </Button>
         </div>
 
-        <h2>Athlete Info</h2>
-        {athlete ? (
-          <pre key={athlete.id}>{JSON.stringify(athlete, null, 2)}</pre>
-        ) : (
-          <h3>No Athlete Info</h3>
-        )}
+        <div className="flex flex-col items-center mt-4 gap-4">
+          <h2 className="text-4xl">Access Token</h2>
+          <div>{accessToken ?? "You need to login with Strava"}</div>
+        </div>
 
-        <br />
+        <div className="flex gap-4 mt-8">
+          <Button onClick={updateTodayActivity} disabled={!accessToken}>
+            Add Today Strava Activity to Notion
+          </Button>
+        </div>
 
-        <h2>Activities</h2>
-        {activities.length > 0 ? (
-          <div>
-            {activities.map((activity: any) => {
-              activity = {
-                ...activity,
-                map: "",
-                pace: getPace(
-                  parseFloat(activity.moving_time),
-                  activity.distance
-                ),
-              };
-              return (
-                <pre key={activity.id}>{JSON.stringify(activity, null, 2)}</pre>
-              );
-            })}
+        <div className="flex flex-row gap-8 mt-4">
+          <div className="flex flex-col items-center my-4 gap-4">
+            <h2 className="text-4xl">Athlete Info</h2>
+            <Button onClick={getAthlete} disabled={!accessToken}>
+              Show Athlete
+            </Button>
+            {athlete ? (
+              <pre key={athlete.id}>{JSON.stringify(athlete, null, 2)}</pre>
+            ) : null}
           </div>
-        ) : (
-          <div>No Activity Fetched</div>
-        )}
+
+          <div className="flex flex-col items-center my-4 gap-4">
+            <h2 className="text-4xl">Activities</h2>
+            <Button onClick={getActivities} disabled={!accessToken}>
+              Show Activities
+            </Button>
+            {activities.length > 0 ? (
+              <div>
+                {activities.map((activity: any) => {
+                  activity = {
+                    ...activity,
+                    map: "",
+                    pace: getPace(
+                      parseFloat(activity.moving_time),
+                      activity.distance
+                    ),
+                  };
+                  return (
+                    <pre key={activity.id}>
+                      {JSON.stringify(activity, null, 2)}
+                    </pre>
+                  );
+                })}
+              </div>
+            ) : null}
+          </div>
+        </div>
       </main>
     </div>
   );
