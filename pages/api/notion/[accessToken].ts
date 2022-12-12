@@ -51,8 +51,8 @@ export default async function handler(
         },
       });
 
-      const today = new Date();
       // get today row from notion db
+      const today = new Date();
       const todayFormattedDate = today.toISOString().split("T")[0];
 
       const rowToUpdate = data.results.find(
