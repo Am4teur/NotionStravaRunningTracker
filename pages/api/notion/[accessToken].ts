@@ -19,6 +19,15 @@ const fetchData = async (url: string, method: string = "GET") => {
   return data;
 };
 
+const getOneMonthLater = (): string => {
+  //get next month
+  const today = new Date();
+  const nextMonth = ((today.getMonth() + 1) % 12) + 1;
+  const year = today.getFullYear() + (today.getMonth() > nextMonth ? 1 : 0);
+
+  return `${year}-${nextMonth < 10 ? "0" + nextMonth : nextMonth}-01`;
+};
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<any>
@@ -30,15 +39,6 @@ export default async function handler(
 
   switch (method) {
     case "PATCH":
-      //get next month
-      const today = new Date();
-      const nextMonth = ((today.getMonth() + 1) % 12) + 1;
-      const year = today.getFullYear() + (today.getMonth() > nextMonth ? 1 : 0);
-
-      const beforeDate = `${year}-${
-        nextMonth < 10 ? "0" + nextMonth : nextMonth
-      }-01`;
-
       // get notion db
       const data: any = await notion.databases.query({
         database_id: process.env.NOTION_DB_ID || "",
@@ -46,11 +46,12 @@ export default async function handler(
         filter: {
           property: "Date",
           date: {
-            before: beforeDate,
+            before: getOneMonthLater(),
           },
         },
       });
 
+      const today = new Date();
       // get today row from notion db
       const todayFormattedDate = today.toISOString().split("T")[0];
 
