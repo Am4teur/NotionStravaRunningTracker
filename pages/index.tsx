@@ -24,8 +24,7 @@ const Home = () => {
 
     const responseCodeParam = "response_type=code";
 
-    // const redirectUrl = "http://localhost:3000/";
-    const redirectUrl = "http://localhost:3008/exchange_token";
+    const redirectUrl = `${process.env.NEXT_PUBLIC_VERCEL_URL}/exchange_token`;
     const redirectUrlParam = "redirect_uri=" + redirectUrl;
 
     const approvalPromptParam = "approval_prompt=auto"; //force
@@ -84,7 +83,7 @@ const Home = () => {
 
   const updateTodayActivity = async () => {
     const response = await fetch(
-      `http://localhost:3008/api/notion/${accessToken}`,
+      `${process.env.NEXT_PUBLIC_VERCEL_URL}/api/notion/${accessToken}`,
       {
         method: "PATCH",
       }

@@ -64,7 +64,7 @@ export default async function handler(
 
       //get activities
       const activities = await fetchData(
-        `http://localhost:3008/api/activities/${accessToken}`
+        `${process.env.NEXT_PUBLIC_VERCEL_URL}/api/activities/${accessToken}`
       );
 
       const testingFormattedDate = "2022-12-10"; // todayFormattedDate
