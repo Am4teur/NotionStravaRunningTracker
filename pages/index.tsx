@@ -136,7 +136,7 @@ const Home = () => {
       </Head>
 
       <main className={styles.main}>
-        <h1 className="text-6xl mb-8">Running Tracker</h1>
+        <h1 className="text-6xl mb-8 text-center">Running Tracker</h1>
         {/* <h2 className="text-4xl mb-4">from Runners to Runners</h2> */}
 
         <div className="mb-4">
@@ -145,8 +145,9 @@ const Home = () => {
           </Button>
         </div>
 
-        <h2 className="text-xl mb-4">
-          Access Token: {accessToken ?? "You need to login to Strava"}
+        <h2 className="flex flex-col text-center text-xl mb-4">
+          <span>Access Token:</span>
+          <span>{accessToken ?? "You need to login to Strava"}</span>
         </h2>
 
         <form
@@ -166,42 +167,38 @@ const Home = () => {
           </Button>
         </form>
 
-        <div className="flex flex-row gap-8 mt-4">
-          <div className="flex flex-col items-center my-4 gap-4">
-            <h2 className="text-4xl">Athlete Info</h2>
-            <Button onClick={getAthlete} disabled={!accessToken}>
-              Show Athlete
-            </Button>
-            {athlete ? (
-              <pre key={athlete.id}>{JSON.stringify(athlete, null, 2)}</pre>
-            ) : null}
-          </div>
+        <div className="grid grid-flow-col grid-cols-2 grid-rows-2 items-center gap-4 mt-4">
+          <h2 className="text-center text-4xl">Athlete Info</h2>
+          <Button onClick={getAthlete} disabled={!accessToken}>
+            Show Athlete
+          </Button>
+          {athlete ? (
+            <pre key={athlete.id}>{JSON.stringify(athlete, null, 2)}</pre>
+          ) : null}
 
-          <div className="flex flex-col items-center my-4 gap-4">
-            <h2 className="text-4xl">Activities</h2>
-            <Button onClick={getActivities} disabled={!accessToken}>
-              Show Activities
-            </Button>
-            {activities.length > 0 ? (
-              <div>
-                {activities.map((activity: any) => {
-                  activity = {
-                    ...activity,
-                    map: "",
-                    pace: getPace(
-                      parseFloat(activity.moving_time),
-                      activity.distance
-                    ),
-                  };
-                  return (
-                    <pre key={activity.id}>
-                      {JSON.stringify(activity, null, 2)}
-                    </pre>
-                  );
-                })}
-              </div>
-            ) : null}
-          </div>
+          <h2 className="text-4xl">Activities</h2>
+          <Button onClick={getActivities} disabled={!accessToken}>
+            Show Activities
+          </Button>
+          {activities.length > 0 ? (
+            <div>
+              {activities.map((activity: any) => {
+                activity = {
+                  ...activity,
+                  map: "",
+                  pace: getPace(
+                    parseFloat(activity.moving_time),
+                    activity.distance
+                  ),
+                };
+                return (
+                  <pre key={activity.id}>
+                    {JSON.stringify(activity, null, 2)}
+                  </pre>
+                );
+              })}
+            </div>
+          ) : null}
         </div>
       </main>
     </div>
