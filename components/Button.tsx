@@ -1,10 +1,11 @@
 interface IButtonProps {
   children: string;
-  onClick: () => {} | void;
+  onClick?: () => {} | void;
   disabled?: boolean;
   color?: string;
   stravaIcon?: boolean;
   notionIcon?: boolean;
+  type?: "button" | "submit" | "reset" | undefined;
 }
 
 const Button = ({
@@ -13,10 +14,12 @@ const Button = ({
   disabled = false,
   color = "bg-blue-500",
   stravaIcon = false,
+  type,
 }: IButtonProps) => {
   return disabled ? (
     <button
       className={`${color} text-white font-bold py-2 px-4 rounded opacity-50 cursor-not-allowed inline-flex items-center gap-2`}
+      type={type}
     >
       {stravaIcon ? (
         <svg

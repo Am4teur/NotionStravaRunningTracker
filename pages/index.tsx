@@ -10,6 +10,7 @@ const Home = () => {
   const [athlete, setAthlete] = useState<athlete | null>(null);
   const [activities, setActivities] = useState<activity[] | []>([]);
   const [accessToken, setAccessToken] = useState<string | null>(null);
+  const [dateInput, setDateInput] = useState<string>("");
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -91,6 +92,22 @@ const Home = () => {
     );
   };
 
+  const updateAnyDayActivity = async (e: any) => {
+    e.preventDefault();
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_VERCEL_URL}/api/notion/updateRow`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          stravaAccessToken: accessToken,
+          date: dateInput,
+        }),
+      }
+    );
+
     if (response.ok) {
       console.log(response);
       toast.success("The Notion row was successfully updated", {
@@ -145,6 +162,22 @@ const Home = () => {
             Add Today Strava Activity to Notion
           </Button>
         </div>
+
+        <form
+          className="flex flex-col items-center"
+          onSubmit={updateAnyDayActivity}
+        >
+          <label>Date:</label>
+          <input
+            type="text"
+            value={dateInput}
+            onChange={(e: any) => setDateInput(e.target.value)}
+            placeholder="mm/dd/yyyy"
+          />
+          <Button type="submit" disabled={!accessToken}>
+            Add Specific Day Strava Activity to Notion
+          </Button>
+        </form>
 
         <div className="flex flex-row gap-8 mt-4">
           <div className="flex flex-col items-center my-4 gap-4">
