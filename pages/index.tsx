@@ -10,7 +10,9 @@ const Home = () => {
   const [athlete, setAthlete] = useState<athlete | null>(null);
   const [activities, setActivities] = useState<activity[] | []>([]);
   const [accessToken, setAccessToken] = useState<string | null>(null);
-  const [dateInput, setDateInput] = useState<string>("");
+  const [dateInput, setDateInput] = useState<string>(
+    new Date().toISOString().split("T")[0].replaceAll("-", "/")
+  );
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -83,17 +85,9 @@ const Home = () => {
     return paceInt + ":" + Math.round((paceFloat * 60) / 100);
   };
 
-  const updateTodayActivity = async () => {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_VERCEL_URL}/api/notion/${accessToken}`,
-      {
-        method: "PATCH",
-      }
-    );
-  };
-
-  const updateAnyDayActivity = async (e: any) => {
+  const updateNotionActivity = async (e: any) => {
     e.preventDefault();
+
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_VERCEL_URL}/api/notion/updateRow`,
       {
@@ -109,7 +103,6 @@ const Home = () => {
     );
 
     if (response.ok) {
-      console.log(response);
       toast.success("The Notion row was successfully updated", {
         position: "top-center",
         autoClose: 4000,
@@ -143,39 +136,33 @@ const Home = () => {
       </Head>
 
       <main className={styles.main}>
-        <h1 className={styles.title}>Running Tracker</h1>
-        <h2 className="text-4xl">from Runners to Runners</h2>
+        <h1 className="text-6xl mb-8">Running Tracker</h1>
+        {/* <h2 className="text-4xl mb-4">from Runners to Runners</h2> */}
 
-        <div className="mt-8">
+        <div className="mb-4">
           <Button onClick={loginStrava} color="bg-orange-500" stravaIcon>
             Login to Strava
           </Button>
         </div>
 
-        <div className="flex flex-col items-center mt-4 gap-4">
-          <h2 className="text-4xl">Access Token</h2>
-          <div>{accessToken ?? "You need to login to Strava"}</div>
-        </div>
-
-        <div className="flex gap-4 mt-8">
-          <Button onClick={updateTodayActivity} disabled={!accessToken}>
-            Add Today Strava Activity to Notion
-          </Button>
-        </div>
+        <h2 className="text-xl mb-4">
+          Access Token: {accessToken ?? "You need to login to Strava"}
+        </h2>
 
         <form
           className="flex flex-col items-center"
-          onSubmit={updateAnyDayActivity}
+          onSubmit={updateNotionActivity}
         >
-          <label>Date:</label>
+          <label className="block text-lg font-bold mb-2">Date</label>
           <input
+            className="shadow appearance-none border rounded w-full py-2 px-3 mb-2 leading-tight focus:outline-none focus:shadow-outline"
             type="text"
             value={dateInput}
             onChange={(e: any) => setDateInput(e.target.value)}
-            placeholder="mm/dd/yyyy"
+            placeholder="yyyy/mm/dd"
           />
           <Button type="submit" disabled={!accessToken}>
-            Add Specific Day Strava Activity to Notion
+            Add Strava Activity to Notion
           </Button>
         </form>
 

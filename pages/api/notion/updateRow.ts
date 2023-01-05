@@ -6,11 +6,6 @@ type Data = {
   name: string;
 };
 
-const fakeStravaActivity = {
-  distance: 123,
-  moving_time: "123",
-};
-
 const notion = new Client({
   auth: process.env.NOTION_TOKEN,
 });
@@ -24,47 +19,30 @@ const fetchData = async (url: string, method: string = "GET") => {
   return data;
 };
 
-const getOneMonthLater = (): string => {
-  //get next month
-  const today = new Date();
-  const nextMonth = ((today.getMonth() + 1) % 12) + 1;
-  const year = today.getFullYear() + (today.getMonth() > nextMonth ? 1 : 0);
-
-  return `${year}-${nextMonth < 10 ? "0" + nextMonth : nextMonth}-01`;
-};
-
 /*
   {
     results: [
       {
-
-      }
+        properties" {
+          Time: [Object],
+          Date: [Object],
+          Pace: [Object],
+          Tracker: [Object],
+          Km: [Object],
+          Day: [Object],
+          Comments: [Object],
+          Docs: [Object]
+        }
+      },
+      {...},
+      ...
     ]
   }
 */
-const getNotionDB = async (beforeDate: string) => {
+const getNotionDB = async () => {
   return await notion.databases.query({
     database_id: process.env.NOTION_DB_ID || "",
-    filter: {
-      property: "Date",
-      date: {
-        before: beforeDate,
-      },
-    },
   });
-};
-
-/*
-  input:
-    date: "20-1-2023"
-  output:
-    "2023-20-1"
-*/
-const getDateFormatted = (date: string): string => {
-  const dateToUpdate = new Date(
-    (Array.isArray(date) ? date[0] : date).replaceAll("-", "/")
-  );
-  return dateToUpdate.toISOString().split("T")[0];
 };
 
 const getNotionRowId = (notionData: any, dateToUpdateFormatted: string) => {
@@ -83,7 +61,11 @@ const getActivityToUpdate = async (
     `${process.env.NEXT_PUBLIC_VERCEL_URL}/api/activities/${stravaAccessToken}`
   );
 
-  // const activityToUpdate = fakeStravaActivity;
+  // const fakeStravaActivity = {
+  //   distance: 123,
+  //   moving_time: "123",
+  // };
+  // const activityToUpdate = fakeStravaActivity; // I only use distance & moving_time props
   const activityToUpdate = activities.find(
     (activity: any) =>
       activity.start_date.split("T")[0] === dateToUpdateFormatted // testingFormattedDate
@@ -110,10 +92,14 @@ export default async function handler(
   switch (method) {
     case "PATCH":
       // get notion db
-      const notionData = await getNotionDB(getOneMonthLater());
+      const notionData = await getNotionDB();
 
       // get today Or dateToUpdate row from notion db
-      const dateToUpdateFormatted = getDateFormatted(date);
+      const dateToUpdateFormatted = new Date(
+        Array.isArray(date) ? date[0] : date
+      )
+        .toISOString()
+        .split("T")[0];
       // const testingFormattedDate = "2022-12-10";
 
       const [notionRowId, checkboxState] = getNotionRowId(
