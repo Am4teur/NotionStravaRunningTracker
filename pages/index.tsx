@@ -1,5 +1,6 @@
 import Head from "next/head";
 import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 import Button from "../components/Button";
 import styles from "../styles/Home.module.css";
 import { activity } from "../types/activity";
@@ -88,6 +89,32 @@ const Home = () => {
         method: "PATCH",
       }
     );
+  };
+
+    if (response.ok) {
+      console.log(response);
+      toast.success("The Notion row was successfully updated", {
+        position: "top-center",
+        autoClose: 4000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+      });
+    } else {
+      toast.error("Something went wrong 😔", {
+        position: "top-center",
+        autoClose: 4000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+      });
+    }
   };
 
   return (
