@@ -39,11 +39,16 @@ const fetchData = async (url: string, method: string = "GET") => {
     ]
   }
 */
-const getNotionDB = async () => {
-  return await notion.databases.query({
+const getNotionDB = async () =>
+  await notion.databases.query({
     database_id: process.env.NOTION_DB_ID || "",
+    filter: {
+      property: "Date",
+      date: {
+        past_month: {},
+      },
+    },
   });
-};
 
 const getNotionRowId = (notionData: any, dateToUpdateFormatted: string) => {
   const rowToUpdate = notionData.results.find(
